@@ -1,0 +1,52 @@
+CREATE TABLE Genres (
+  genre_id INT PRIMARY KEY,
+  genre_name VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Artists (
+  artist_id INT PRIMARY KEY,
+  artist_name VARCHAR(200) NOT NULL,
+  -- Внешний ключ для связи с таблицей "Жанры"
+  genre_id INT REFERENCES Genres(genre_id)
+);
+
+
+CREATE TABLE Albums (
+  album_id INT PRIMARY KEY,
+  album_name VARCHAR(200) NOT NULL,
+  release_year INT,
+  -- Внешний ключ для связи с таблицей "Исполнители"
+  artist_id INT REFERENCES Artists(artist_id)
+);
+
+
+CREATE TABLE Tracks (
+  track_id INT PRIMARY KEY,
+  track_name VARCHAR(200) NOT NULL,
+  duration INT,
+  -- Внешний ключ для связи с таблицей "Альбомы"
+  album_id INT REFERENCES Albums(album_id)
+);
+
+
+CREATE TABLE Compilations (
+  compilation_id INT PRIMARY KEY,
+  compilation_name VARCHAR(200) NOT NULL,
+  release_year INT
+);
+
+CREATE TABLE TracksInCompilation (
+  track_id INT REFERENCES Tracks(track_id),
+  compilation_id INT REFERENCES Compilations(compilation_id),
+  PRIMARY KEY (track_id, compilation_id)
+);
+
+Доп задание
+CREATE TABLE Employees (
+  employee_id SERIAL PRIMARY KEY, -- Уникальный идентификатор сотрудника (автоинкрементируемое поле)
+  name VARCHAR(100) NOT NULL, -- Имя сотрудника
+  department VARCHAR(50) NOT NULL, -- Отдел сотрудника (хранится строкой)
+  manager_id INT, -- Идентификатор начальника (ссылка на другого сотрудника)
+  FOREIGN KEY (manager_id) REFERENCES Employees(employee_id) -- Внешний ключ для связи с другим сотрудником
+);
