@@ -1,52 +1,50 @@
+-- Создание таблицы Genres (Жанры)
 CREATE TABLE Genres (
-  genre_id INT PRIMARY KEY,
+  genre_id SERIAL PRIMARY KEY,
   genre_name VARCHAR(100) NOT NULL
 );
 
-
+-- Создание таблицы Artists (Исполнители)
 CREATE TABLE Artists (
-  artist_id INT PRIMARY KEY,
-  artist_name VARCHAR(200) NOT NULL,
-  -- Внешний ключ для связи с таблицей "Жанры"
-  genre_id INT REFERENCES Genres(genre_id)
+  artist_id SERIAL PRIMARY KEY,
+  artist_name VARCHAR(200) NOT NULL
 );
 
+-- Создание таблицы Genres_Artists (Связь между жанрами и исполнителями)
+CREATE TABLE Genres_Artists (
+  genre_id INT REFERENCES Genres(genre_id) ON DELETE CASCADE,
+  artist_id INT REFERENCES Artists(artist_id) ON DELETE CASCADE,
+  PRIMARY KEY (genre_id, artist_id)
+);
 
+-- Создание таблицы Albums (Альбомы)
 CREATE TABLE Albums (
-  album_id INT PRIMARY KEY,
+  album_id SERIAL PRIMARY KEY,
   album_name VARCHAR(200) NOT NULL,
   release_year INT,
-  -- Внешний ключ для связи с таблицей "Исполнители"
-  artist_id INT REFERENCES Artists(artist_id)
+  artist_id INT REFERENCES Artists(artist_id) ON DELETE CASCADE
 );
 
+-- Создание таблицы Artists_Albums (Связь между исполнителями и альбомами)
+CREATE TABLE Artists_Albums (
+  artist_id INT REFERENCES Artists(artist_id) ON DELETE CASCADE,
+  album_id INT REFERENCES Albums(album_id) ON DELETE CASCADE,
+  PRIMARY KEY (artist_id, album_id)
+);
 
+-- Создание таблицы Tracks (Треки)
 CREATE TABLE Tracks (
-  track_id INT PRIMARY KEY,
+  track_id SERIAL PRIMARY KEY,
   track_name VARCHAR(200) NOT NULL,
-  duration INT,
-  -- Внешний ключ для связи с таблицей "Альбомы"
-  album_id INT REFERENCES Albums(album_id)
+  duration TIME,
+  album_id INT REFERENCES Albums(album_id) ON DELETE CASCADE
 );
 
-
+-- Создание таблицы Compilations (Сборники)
 CREATE TABLE Compilations (
-  compilation_id INT PRIMARY KEY,
+  compilation_id SERIAL PRIMARY KEY,
   compilation_name VARCHAR(200) NOT NULL,
   release_year INT
 );
 
-CREATE TABLE TracksInCompilation (
-  track_id INT REFERENCES Tracks(track_id),
-  compilation_id INT REFERENCES Compilations(compilation_id),
-  PRIMARY KEY (track_id, compilation_id)
-);
-
-Доп задание
-CREATE TABLE Employees (
-  employee_id SERIAL PRIMARY KEY, -- Уникальный идентификатор сотрудника (автоинкрементируемое поле)
-  name VARCHAR(100) NOT NULL, -- Имя сотрудника
-  department VARCHAR(50) NOT NULL, -- Отдел сотрудника (хранится строкой)
-  manager_id INT, -- Идентификатор начальника (ссылка на другого сотрудника)
-  FOREIGN KEY (manager_id) REFERENCES Employees(employee_id) -- Внешний ключ для связи с другим сотрудником
-);
+-- Создание таблицы Compilations_Tracks (Связь между сборниками и треками)
