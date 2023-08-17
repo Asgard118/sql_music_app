@@ -1,13 +1,13 @@
 -- Создание таблицы Genres (Жанры)
 CREATE TABLE Genres (
   genre_id SERIAL PRIMARY KEY,
-  genre_name VARCHAR(100)UNIQUE, NOT NULL
+  genre_name VARCHAR(100) NOT NULL
 );
 
 -- Создание таблицы Artists (Исполнители)
 CREATE TABLE Artists (
   artist_id SERIAL PRIMARY KEY,
-  artist_name VARCHAR(200)UNIQUE, NOT NULL
+  artist_name VARCHAR(200) NOT NULL
 );
 
 -- Создание таблицы Genres_Artists (Связь между жанрами и исполнителями)

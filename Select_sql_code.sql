@@ -23,7 +23,7 @@ WHERE artist_name NOT LIKE '% %';
 --Название треков, которые содержат слово «мой» или «my».
 SELECT track_name
 FROM Tracks
-WHERE track_name ILIKE '%мой%' OR track_name ILIKE '%my%';
+WHERE track_name ~* '\\mмой\\M' OR track_name ~* '\\mmy\\M';
 
 --Количество исполнителей в каждом жанре.
 SELECT g.genre_name, COUNT(ga.artist_id) AS artist_count
@@ -45,7 +45,13 @@ SELECT DISTINCT ar.artist_name
 FROM Artists ar
 LEFT JOIN Artists_Albums aa ON ar.artist_id = aa.artist_id
 LEFT JOIN Albums a ON aa.album_id = a.album_id
-WHERE a.release_year <> 2020 OR a.release_year IS NULL;
+WHERE ar.artist_id NOT IN (
+    SELECT DISTINCT ar.artist_id
+    FROM Artists ar
+    JOIN Artists_Albums aa ON ar.artist_id = aa.artist_id
+    JOIN Albums a ON aa.album_id = a.album_id
+    WHERE a.release_year = 2020
+);
 --Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами).
 SELECT c.compilation_name
 FROM compilations c
@@ -81,5 +87,12 @@ SELECT a.album_name, COUNT(t.track_id) AS track_count
 FROM Albums a
 LEFT JOIN Tracks t ON a.album_id = t.album_id
 GROUP BY a.album_name
-ORDER BY track_count ASC
-LIMIT 1;
+HAVING COUNT(t.track_id) = (
+    SELECT MIN(track_count)
+    FROM (
+        SELECT COUNT(t.track_id) AS track_count
+        FROM Albums a
+        LEFT JOIN Tracks t ON a.album_id = t.album_id
+        GROUP BY a.album_id
+    ) AS track_counts
+);
